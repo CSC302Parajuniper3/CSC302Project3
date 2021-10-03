@@ -1,0 +1,35 @@
+{
+  "name": "fhir-guidelines-library",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A library for existing digital medical guidelines in FHIR format that allows other apps to retrieve them",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.8"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "bash scripts/start.sh",
+    "test": "bash scripts/test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CSC302Parajuniper3/CSC302Project3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CSC302Parajuniper3/CSC302Project3/issues"
+  },
+  "homepage": "https://github.com/CSC302Parajuniper3/CSC302Project3#readme"
+}
