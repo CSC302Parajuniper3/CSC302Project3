@@ -51,13 +51,29 @@ Also please ensure that the docker service is running. If it is not running, you
 
 Once docker is running, simply build and run the project:
 
-    docker-compose up -d
+    docker-compose up -d e_dev
 
 This will automatically build an image if one does not exist, and then run the application.
 
 The `-d` command will run the application in the background as a daemon.
 
 If you want to force a build, add the `--build` argument. If you want to build without running, use the command `docker-compose build`
+
+### Targets
+
+The docker-compose configuration contains seperate targets for test, development/staging, and production builds. To run one of these builds, simply use the commands:
+
+    docker-compose up [commands] <target>
+
+Here are is the list of all currently available targets:
+
++ `e_test` -- Test build for express.js server.
++ `e_dev`  -- Development build for express.js server.
++ `e_prod` -- Production build for express.js server.
+
+### Troubleshooting
+
+- If you get the following error while deploying: `Error while fetching server API version` then your issue might be permission issues with docker's socket. Run the (Linux) command `sudo chmod 666 /var/run/docker.sock`, which may solve the issue.
 
 ---
 
