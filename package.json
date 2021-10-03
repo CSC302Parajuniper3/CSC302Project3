@@ -21,8 +21,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "bash scripts/start.sh",
-    "test": "bash scripts/test.sh"
+    "start": "node app.js",
+    "test": "echo 'I am running a test!'"
   },
   "repository": {
     "type": "git",

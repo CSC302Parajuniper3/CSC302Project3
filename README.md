@@ -40,6 +40,27 @@ Runs the test suites of the project.
 
 ---
 
+## Docker
+
+### Configuration
+This project uses `Docker` and `docker-compose` to containerize and deploy the application. Please ensure you have `docker`, `docker-compose`, and `docker-engine` installed on your machine. 
+
+Also please ensure that the docker service is running. If it is not running, you can launch it on Linux machines with the command `sudo systemctl start docker`. If you are not running Linux, please search online for further instructions.
+
+### Building and Running
+
+Once docker is running, simply build and run the project:
+
+    docker-compose up -d
+
+This will automatically build an image if one does not exist, and then run the application.
+
+The `-d` command will run the application in the background as a daemon.
+
+If you want to force a build, add the `--build` argument. If you want to build without running, use the command `docker-compose build`
+
+---
+
 ## Tech stack summary and decision log:
 
 Selected options are in **bold** next to each bullet point
