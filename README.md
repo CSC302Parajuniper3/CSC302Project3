@@ -25,7 +25,7 @@ scripts/
 
 # Where to find our documentation and meeting notes
 
-## Milestones and roadmap:
+## Tech Stack and Decisions:
 
 Tech stack and their decisions can be found in the `Tech Stack.pdf` file under the `documents` folder in the top level directory of the repo.
 
