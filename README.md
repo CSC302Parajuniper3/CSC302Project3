@@ -27,13 +27,13 @@ scripts/
 
 ## Tech Stack and Decisions:
 
-Tech stack and their decisions can be found in the `Tech Stack.pdf` file under the `documents` folder in the top level directory of the repo.
+Tech stack and their decisions can be found in the `Tech Stack.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
 ## Project development plan:
 
-The project development plan can be found in the `Milestones.pdf` file under the `documents` folder in the top level directory of the repo.
+The project development plan can be found in the `Milestones.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
