@@ -25,15 +25,15 @@ scripts/
 
 # Where to find our documentation and meeting notes
 
-## Milestones and roadmap:
+## Tech Stack and Decisions:
 
-Tech stack and their decisions can be found in the `Tech Stack.pdf` file under the `documents` folder in the top level directory of the repo.
+Tech stack and their decisions can be found in the `Tech Stack.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
 ## Project development plan:
 
-The project development plan can be found in the `Milestones.pdf` file under the `documents` folder in the top level directory of the repo.
+The project development plan can be found in the `Milestones.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
@@ -56,13 +56,14 @@ Also please ensure that the docker service is running. If it is not running, you
 
 Once docker is running, simply build and run the project:
 
-    docker-compose up -d e_dev
+    docker-compose up <target>
+    Example: docker-compose up e_dev
 
-This will automatically build an image if one does not exist, and then run the application. If you see errors about permissions, try running `sudo docker-compose up -d e_dev`
+This will automatically build an image if one does not exist, and then run the application. If you see errors regarding permissions, try running `sudo docker-compose up e_dev`
 
-The `-d` command will run the application in the background as a daemon.
+By using `docker-compose up -d <target>`, docker will run the application in the background as a daemon.
 
-If you want to force a build, add the `--build` argument. If you want to build without running, use the command `docker-compose build`
+If you want to force a build, add the `--build` argument before the target. If you want to build without running, use the command `docker-compose build`
 
 ### Targets
 
@@ -76,15 +77,32 @@ Here are is the list of all currently available targets:
 + `e_dev`  -- Development build for express.js server.
 + `e_prod` -- Production build for express.js server.
 
+## How to verify that our project works?
+
+Do not use the -d option in this case.
+
+Currently, you should see the output `"I am running a test!"` if you're running `e_test` or `"I am running!"` if you're running `e_dev` or `e_prod`.
+
 ### Troubleshooting
 
 - If you get the following error while deploying: `Error while fetching server API version` then your issue might be permission issues with docker's socket. Run the (Linux) command `sudo chmod 666 /var/run/docker.sock`, which may solve the issue.
 
 ---
 
-## Available Scripts
+## Heroku
 
-In the project directory, you can run the following commands to install/run/test our project using npm.
+We are using heroku to deploy our app.
+
+You can access the webpage using the following link: https://parajuniper-guidelines.herokuapp.com/
+
+There is currently a blank page with the text "Hello World!"
+
+---
+
+## Available Manual Scripts
+
+In the project directory, you can manually run the following commands to install/run/test our project using npm.
+***However**, we would prefer using Docker (see above) to run/build/test our project. This is included for documentation purposes only.*
 
 ### `npm install`
 
@@ -97,7 +115,5 @@ Runs the project on the local machine.
 ### `npm test`
 
 Runs the test suites of the project.
-
-Alternatively, use Docker to install/run/test our project in one click.
 
 ---
