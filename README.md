@@ -56,13 +56,14 @@ Also please ensure that the docker service is running. If it is not running, you
 
 Once docker is running, simply build and run the project:
 
-    docker-compose up e_dev
+    docker-compose up <target>
+    Example: docker-compose up e_dev
 
 This will automatically build an image if one does not exist, and then run the application. If you see errors regarding permissions, try running `sudo docker-compose up e_dev`
 
-By using `docker-compose up -d`, docker will run the application in the background as a daemon.
+By using `docker-compose up -d <target>`, docker will run the application in the background as a daemon.
 
-If you want to force a build, add the `--build` argument. If you want to build without running, use the command `docker-compose build`
+If you want to force a build, add the `--build` argument before the target. If you want to build without running, use the command `docker-compose build`
 
 ### Targets
 
@@ -101,7 +102,7 @@ There is currently a blank page with the text "Hello World!"
 ## Available Manual Scripts
 
 In the project directory, you can manually run the following commands to install/run/test our project using npm.
-However, we would prefer using Docker (see above) to run/build/test our project.
+***However**, we would prefer using Docker (see above) to run/build/test our project. This is included for documentation purposes only.*
 
 ### `npm install`
 
@@ -114,7 +115,5 @@ Runs the project on the local machine.
 ### `npm test`
 
 Runs the test suites of the project.
-
-Alternatively, use Docker to install/run/test our project in one click.
 
 ---
