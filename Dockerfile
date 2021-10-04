@@ -22,7 +22,7 @@ CMD ["npm", "test"]
 # DEVELOPMENT
 FROM base as dev
 ENV NODE_ENV=development
-RUN npm install --developmen
+RUN npm install --development
 COPY . ./
 CMD ["npm", "start"]
 
