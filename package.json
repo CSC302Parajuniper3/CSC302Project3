@@ -19,10 +19,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node app.js",
-    "test": "echo 'I am running a test!'"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -31,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/CSC302Parajuniper3/CSC302Project3/issues"
   },
-  "homepage": "https://github.com/CSC302Parajuniper3/CSC302Project3#readme"
+  "homepage": "https://github.com/CSC302Parajuniper3/CSC302Project3#readme",
+  "devDependencies": {
+    "jest": "^27.2.4"
+  }
 }
