@@ -4,7 +4,7 @@ const { ObjectID } = require('mongodb')
 // todo: fill in activity definition schema
 const ActivityDefinitionSchema = new mongoose.Schema({
     id: {
-        type: ObjectID,
+        type: String,
         minLength: 1,
         required: true
     }

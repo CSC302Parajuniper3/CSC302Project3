@@ -16,8 +16,6 @@ const validateResourceTypeAndId = (req, res, next) => {
 
   if (!id) {
     errors.push("Missing id in request");
-  } else if (!ObjectID.isValid(id)) {
-    errors.push(`Invalid id: ${id}`);
   }
 
   if (!resourceType) {
@@ -34,14 +32,15 @@ const validateResourceTypeAndId = (req, res, next) => {
 }
 
 function load_db() {
-    mongoose.connect('mongodb://127.0.0.1:27017/test');
-    
-    const activitySchema = new mongoose.Schema({ id: 'string' });
-    ActivityDefinition = mongoose.model('Activity', activitySchema);
+  // todo: replace with remote db uri
+  mongoose.connect('mongodb://127.0.0.1:27017/test');
 
-    const planSchema = new mongoose.Schema({ id: 'string' });
-    PlanDefinition = mongoose.model('Plan', planSchema);
-  }
+  // const activitySchema = new mongoose.Schema({ id: 'string' });
+  // activityModel = mongoose.model('Activity', activitySchema);
+
+  // const planSchema = new mongoose.Schema({ id: 'string' });
+  // planModel = mongoose.model('Plan', planSchema);
+}
 
 load_db();
 
@@ -54,17 +53,17 @@ app.get('/listDefinitions', (req, res) => {
   } else if (resourceType === "PlanDefinition") {
     model = PlanDefinition;
   } else {
-    res.status(404).send({error: "Resource type invalid."});
+    res.status(404).send({ error: "Resource type invalid." });
     return;
   }
 
   if (model == null) {
-    res.status(500).send({error: "An error occurred internally. Please try again later."});
+    res.status(500).send({ error: "An error occurred internally. Please try again later." });
     return;
   }
 
-  model.distinct('id', function(err, listIds) {
-    res.send({ids: listIds});
+  model.distinct('id', function (err, listIds) {
+    res.send({ ids: listIds });
   });
 });
 
