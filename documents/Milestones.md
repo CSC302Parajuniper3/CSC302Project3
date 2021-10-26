@@ -19,7 +19,7 @@
   * Directions to our collection of meeting notes
 
 ## Milestone 2: Setting up DB and implementing basic functionality + unit tests
-*To be done by: A2 deadline*
+*To be done by: Nov 4th, 2021*
 
 ### Sub-tasks:
 * Create db/schemas and populate our guideline definitions **(Assigned: James)**
