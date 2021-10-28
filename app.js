@@ -9,40 +9,31 @@ const { PlanDefinition } = require('./models/plan-definition');
 
 var events = require('events');
 
+function connectDb() {
+  // todo: replace with remote db uri
+  mongoose.connect('mongodb://127.0.0.1:27017/test');
+}
+connectDb();
+
 const VALID_RESOURCE_TYPES = ['ActivityDefinition', 'PlanDefinition']
 const validateResourceTypeAndId = (req, res, next) => {
   const { resourceType, id } = req.params;
-  errors = [];
+  let error = null;
 
   if (!id) {
-    errors.push("Missing id in request");
-  }
-
-  if (!resourceType) {
-    errors.push("Missing resourceType in request");
+    error = "Missing id in request";
+  } else if (!resourceType) {
+    error = "Missing resourceType in request";
   } else if (!VALID_RESOURCE_TYPES.includes(resourceType)) {
-    errors.push(`Invalid resourceType: ${resourceType}`);
+    error = `Invalid resourceType: ${resourceType}`;
   }
 
-  if (errors.length) {
-    res.status(400).send({ errors });
+  if (error) {
+    res.status(400).send({ error });
   } else {
     next();
   }
 }
-
-function load_db() {
-  // todo: replace with remote db uri
-  mongoose.connect('mongodb://127.0.0.1:27017/test');
-
-  // const activitySchema = new mongoose.Schema({ id: 'string' });
-  // activityModel = mongoose.model('Activity', activitySchema);
-
-  // const planSchema = new mongoose.Schema({ id: 'string' });
-  // planModel = mongoose.model('Plan', planSchema);
-}
-
-load_db();
 
 app.get('/listDefinitions', (req, res) => {
   let resourceType = req.query.resourceType;

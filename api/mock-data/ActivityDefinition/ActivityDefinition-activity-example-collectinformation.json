@@ -1,0 +1,79 @@
+{
+    "resourceType": "ActivityDefinition",
+    "id": "activity-example-collectinformation",
+    "meta": {
+        "profile": [
+            "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-computableactivity"
+        ]
+    },
+    "extension": [
+        {
+            "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-knowledgeCapability",
+            "valueCode": "shareable"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-knowledgeCapability",
+            "valueCode": "computable"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-knowledgeCapability",
+            "valueCode": "publishable"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-knowledgeRepresentationLevel",
+            "valueCode": "structured"
+        },
+        {
+            "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-collectWith",
+            "valueCanonical": "http://hl7.org/fhir/uv/cpg/Questionnaire/activity-example-collectinformation"
+        }
+    ],
+    "url": "http://hl7.org/fhir/uv/cpg/ActivityDefinition/activity-example-collectinformation",
+    "version": "1.0.0",
+    "name": "ActivityExampleCollectInformation",
+    "title": "Activity Example Collect Information",
+    "status": "draft",
+    "experimental": true,
+    "date": "2021-02-11T17:57:58+00:00",
+    "publisher": "HL7 International - Clinical Decision Support WG",
+    "description": "Example Activity Definition for a recommendation to collect information",
+    "jurisdiction": [
+        {
+            "coding": [
+                {
+                    "system": "http://unstats.un.org/unsd/methods/m49/m49.htm",
+                    "code": "001",
+                    "display": "World"
+                }
+            ]
+        }
+    ],
+    "kind": "Task",
+    "profile": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-questionnairetask",
+    "code": {
+        "coding": [
+            {
+                "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-activity-type",
+                "code": "collect-information",
+                "display": "Collect information"
+            }
+        ]
+    },
+    "doNotPerform": false,
+    "dynamicValue": [
+        {
+            "path": "input.type",
+            "expression": {
+                "language": "text/cql",
+                "expression": "code"
+            }
+        },
+        {
+            "path": "input.value",
+            "expression": {
+                "language": "text/cql",
+                "expression": "extension('http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-collectWith').value"
+            }
+        }
+    ]
+}

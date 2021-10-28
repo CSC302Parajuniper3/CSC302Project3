@@ -1,4 +1,4 @@
-# Team JSHD -A1 Blameless Post-mortem:
+# A1 Blameless Post-mortem:
 
 - What goals have been achieved?
   - A github repo is created with our team members for the project
