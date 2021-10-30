@@ -12,4 +12,4 @@ const PlanDefinitionSchema = new mongoose.Schema({
 
 const PlanDefinition = mongoose.model('PlanDefinition', PlanDefinitionSchema);
 
-module.exports = { PlanDefinition };
+module.exports = PlanDefinition;

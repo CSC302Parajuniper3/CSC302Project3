@@ -8,8 +8,8 @@ var planModel;
 jest.setTimeout(300000);
 
 beforeAll(() => {
-  activityModel = server.activityModel;
-  planModel = server.planModel;
+  activityModel = server.ActivityDefinition;
+  planModel = server.PlanDefinition;
 })
 
 beforeEach(() => {

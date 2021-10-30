@@ -12,4 +12,4 @@ const ActivityDefinitionSchema = new mongoose.Schema({
 
 const ActivityDefinition = mongoose.model('ActivityDefinition', ActivityDefinitionSchema);
 
-module.exports = { ActivityDefinition };
+module.exports = ActivityDefinition;

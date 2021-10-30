@@ -3,9 +3,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const mongoose = require('mongoose');
-
-const { ActivityDefinition } = require('./models/activity-definition');
-const { PlanDefinition } = require('./models/plan-definition');
+const ActivityDefinition = require('./models/activity-definition');
+const PlanDefinition = require('./models/plan-definition');
 
 var events = require('events');
 
@@ -96,5 +95,4 @@ function close() {
   app_server.close();
 }
 
-module.exports.close = close;
-module.exports.app_server = app_server
+module.exports = { close, ActivityDefinition, PlanDefinition, app_server };
