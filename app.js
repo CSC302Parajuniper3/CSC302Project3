@@ -14,7 +14,11 @@ function connectDb() {
 }
 connectDb();
 
+const ACTIVITY_RESOURCE_TYPE = 'ActivityDefinition';
+const PLAN_RESOURCE_TYPE = 'PlanDefinition';
+
 const VALID_RESOURCE_TYPES = ['ActivityDefinition', 'PlanDefinition']
+
 const validateResourceTypeAndId = (req, res, next) => {
   const { resourceType, id } = req.params;
   let error = null;
@@ -34,13 +38,21 @@ const validateResourceTypeAndId = (req, res, next) => {
   }
 }
 
-app.get('/listDefinitions', (req, res) => {
+/**
+ * /listDefinitions:
+ * req: query.resourceType: A string of a resourceType (see above)
+ * res: A list of definitionIds of the specified resourceType
+ * Status:
+ * - 404: resource type invalid.
+ * - 500: internal error if model can't be found.
+ */
+app.get('/listDefinitions', async (req, res) => {
   let resourceType = req.query.resourceType;
   let model = null;
 
-  if (resourceType === "ActivityDefinition") {
+  if (resourceType === ACTIVITY_RESOURCE_TYPE) {
     model = ActivityDefinition;
-  } else if (resourceType === "PlanDefinition") {
+  } else if (resourceType === PLAN_RESOURCE_TYPE) {
     model = PlanDefinition;
   } else {
     res.status(404).send({ error: "Resource type invalid." });
@@ -65,9 +77,9 @@ app.get('/:resourceType/:id', validateResourceTypeAndId, async (req, res) => {
   const { resourceType, id } = req.params;
   let model;
 
-  if (resourceType === "ActivityDefinition") {
+  if (resourceType === ACTIVITY_RESOURCE_TYPE) {
     model = ActivityDefinition;
-  } else if (resourceType === "PlanDefinition") {
+  } else if (resourceType === PLAN_RESOURCE_TYPE) {
     model = PlanDefinition;
   }
 
@@ -95,4 +107,8 @@ function close() {
   app_server.close();
 }
 
-module.exports = { close, ActivityDefinition, PlanDefinition, app_server };
+module.exports = {
+  close,
+  ActivityDefinition, PlanDefinition,
+  ACTIVITY_RESOURCE_TYPE, PLAN_RESOURCE_TYPE, app_server
+};
