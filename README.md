@@ -13,13 +13,11 @@ api/
 meeting-notes/
 documents/
 models/
-scripts/
 ```
 
 * Entry point > `app.js` located in the top level directory
 * Backend > `api/` folder containing routes, services and tests for the API
 * Data > `models/` folder containing mongoose database schemas for our library
-* Execution > `scripts/` folder with scripts for running and testing the app
 
 ---
 

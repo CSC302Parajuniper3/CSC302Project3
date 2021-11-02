@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "repository": {
     "type": "git",

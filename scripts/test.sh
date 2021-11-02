@@ -1,1 +1,0 @@
-echo "I am running a test!"
