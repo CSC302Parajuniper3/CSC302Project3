@@ -35,6 +35,12 @@ The project development plan can be found in the `Milestones.md` file under the 
 
 ---
 
+## Assignment 2 Results:
+
+The project development plan can be found in the `Asssignment2.md` file under the `documents` folder in the top level directory of the repo.
+
+---
+
 ## Meeting Notes
 
 Meeting notes can be found in the `meeting-notes` folder in the top level directory of the repo.
