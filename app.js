@@ -61,7 +61,7 @@ const validateId = (req, res, next) => {
  * - 404: resource type invalid.
  * - 500: internal error if model can't be found.
  */
-app.get('/listDefinitions', [validateResourceType], async (req, res) => {
+app.get('/listDefinitions', async (req, res) => {
   let resourceType = req.query.resourceType;
   let model = null;
   
@@ -82,10 +82,6 @@ app.get('/listDefinitions', [validateResourceType], async (req, res) => {
   model.distinct('id', function (err, listIds) {
     res.send({ ids: listIds });
   });
-});
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
 });
 
 app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, res) => {
