@@ -90,15 +90,16 @@ If you run 'e_test', you should see an execution of the unit tests. They should 
 
 If you run 'e_dev', you should be able to use the endpoints from Postman.
 
-Endpoints:
-/listDefinitions, QUERY resourceType:<ActivityDefinition OR PlanDefinition>
-Returns a list of defintion ids of the specified type or an empty [] if none exists.
+### Endpoints:
 
-/<ActivityDefinition OR PlanDefinition>/<definiton ID>
-Returns the json of the specified definition id.
+- NAME: /listDefinitions, QUERY resourceType:\<ActivityDefinition OR PlanDefinition>
+  - Returns a list of defintion ids of the specified type or an empty [] if none exists.
 
-/<ActivityDefinition OR PlanDefinition>, BODY: id: The string representing the definition
-Adds a definition with the specified id into the database.
+- NAME: /\<ActivityDefinition OR PlanDefinition>/\<definiton ID>
+  - Returns the json of the specified definition id.
+
+- NAME: /\<ActivityDefinition OR PlanDefinition>, BODY: id: The string representing the definition
+  - Adds a definition with the specified id into the database.
 
 ### Troubleshooting
 
