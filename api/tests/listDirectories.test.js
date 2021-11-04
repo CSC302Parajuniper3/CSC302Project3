@@ -5,16 +5,16 @@ const request = supertest(server.app_server);
 const { ActivityDefinition, PlanDefinition } = server;
 const { ActivityDefinitionData, PlanDefinitionData } = require('../mock-data');
 
-jest.setTimeout(300000);
+jest.setTimeout(10000);
 
 const RESOURCE_INVALID_MSG = 'Resource type invalid.';
 
-beforeEach(() => {
+beforeEach(async () => {
   // Clears all data from db
-  ActivityDefinition.deleteMany({}).catch((err) => {
+  await ActivityDefinition.deleteMany({}).catch((err) => {
     console.error(err);
   });
-  PlanDefinition.deleteMany({}).catch((err) => {
+  await PlanDefinition.deleteMany({}).catch((err) => {
     console.error(err);
   });
 })
@@ -25,7 +25,7 @@ beforeEach(() => {
 test("Bad query", (done) => {
   const INVALID_RESOURCE_TYPE = 'invalid';
 
-  request.get('/listDefinitions').query({ resourceType: INVALID_RESOURCE_TYPE}).expect(404, function(err, res) {
+  request.get('/listDefinitions').query({ resourceType: INVALID_RESOURCE_TYPE }).expect(404, function (err, res) {
     expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
     done();
   });
@@ -34,8 +34,8 @@ test("Bad query", (done) => {
 /**
  * Tests /listDefinitions using a req with an empty query string
  */
- test("Empty query", (done) => {
-  request.get('/listDefinitions').query({ resourceType: ''}).expect(404, function(err, res) {
+test("Empty query", (done) => {
+  request.get('/listDefinitions').query({ resourceType: '' }).expect(404, function (err, res) {
     expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
     done();
   });
@@ -44,8 +44,8 @@ test("Bad query", (done) => {
 /**
  * Tests /listDefinitions using a req wwith a resource type of the wrong datatype.
  */
- test("Bad type query", (done) => {
-  request.get('/listDefinitions').query({ resourceType: 1234}).expect(404, function(err, res) {
+test("Bad type query", (done) => {
+  request.get('/listDefinitions').query({ resourceType: 1234 }).expect(404, function (err, res) {
     expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
     done();
   });
@@ -55,7 +55,7 @@ test("Bad query", (done) => {
  * Tests using an invalid query with no query string
  */
 test("No query", (done) => {
-  request.get('/listDefinitions').expect(404, function(err, res) {
+  request.get('/listDefinitions').expect(404, function (err, res) {
     expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
     done();
   });
@@ -70,33 +70,34 @@ test("Many activities", (done) => {
   const ACT_PREFIX = 'activity';
   const PLAN_PREFIX = 'plan';
 
-  for (let i = 0;i < NUM_ENTRIES;++i) {
-    var activity = new ActivityDefinition({ id: ACT_PREFIX + i });
-    activity.save(function (err, activity) {
-      if (err) return console.error(err);
-    });
+  const activityList = [];
+  const planList = [];
+  for (let i = 0; i < NUM_ENTRIES; ++i) {
+    const activity = new ActivityDefinition({ id: ACT_PREFIX + i });
+    activityList.push(activity);
 
-    var plan = new PlanDefinition({ id: PLAN_PREFIX + i });
-    plan.save(function (err, plan) {
-      if (err) return console.error(err);
-    });
+    const plan = new PlanDefinition({ id: PLAN_PREFIX + i });
+    planList.push(plan);
   }
 
-  let expectedActivity = []
-  let expectedPlan = []
-  for (let i = 0;i < NUM_ENTRIES;++i) {
-    expectedActivity.push(ACT_PREFIX + i);
-    expectedPlan.push(PLAN_PREFIX + i);
-  }
+  Promise.all([ActivityDefinition.insertMany(activityList), PlanDefinition.insertMany(planList)]).then(
+    () => {
+      let expectedActivity = []
+      let expectedPlan = []
+      for (let i = 0; i < NUM_ENTRIES; ++i) {
+        expectedActivity.push(ACT_PREFIX + i);
+        expectedPlan.push(PLAN_PREFIX + i);
+      }
 
-  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }) .expect(200, function(err, res) {
-    expect(res.body.ids.sort()).toEqual(expectedActivity.sort());
-  });
+      request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
+        expect(res.body.ids.sort()).toEqual(expectedActivity.sort());
+      });
 
-  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }) .expect(200, function(err, res) {
-    expect(res.body.ids.sort()).toEqual(expectedPlan.sort());
-    done();
-  });
+      request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }).expect(200, function (err, res) {
+        expect(res.body.ids.sort()).toEqual(expectedPlan.sort());
+        done();
+      });
+    });
 });
 
 /**
@@ -120,11 +121,11 @@ test("One activity", (done) => {
     if (err) return console.error(err);
   });
 
-  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }) .expect(200, function(err, res) {
+  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual(RES_ACT_BODY.sort());
   });
 
-  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }) .expect(200, function(err, res) {
+  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual(RES_PLAN_BODY.sort());
     done();
   });
@@ -135,19 +136,19 @@ test("One activity", (done) => {
  * Ensures that the response is empty/
  */
 test("No activities", (done) => {
-  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }) .expect(200, function(err, res) {
+  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
     expect(res.body.ids).toEqual([]);
   });
 
-  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }) .expect(200, function(err, res) {
+  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }).expect(200, function (err, res) {
     expect(res.body.ids).toEqual([]);
     done();
   });
 });
 
-afterAll(() => {
+afterAll(async () => {
   // Clears all data from db
-  ActivityDefinition.deleteMany({});
-  PlanDefinition.deleteMany({});
+  await ActivityDefinition.deleteMany({});
+  await PlanDefinition.deleteMany({});
   server.close();
 })

@@ -4,14 +4,14 @@ const request = supertest(app.app_server);
 const { ActivityDefinition, PlanDefinition } = app;
 const { ActivityDefinitionData, PlanDefinitionData } = require('../mock-data');
 
-jest.setTimeout(30000);
+jest.setTimeout(10000);
 
-beforeAll(() => {
+beforeAll(async () => {
   // clear and insert mock data into db
-  ActivityDefinition.deleteMany({}).catch((err) => {
+  await ActivityDefinition.deleteMany({}).catch((err) => {
     console.error(err);
   });
-  PlanDefinition.deleteMany({}).catch((err) => {
+  await PlanDefinition.deleteMany({}).catch((err) => {
     console.error(err);
   });
 
@@ -81,8 +81,8 @@ test("Record found", (done) => {
   });
 });
 
-afterAll(() => {
-  ActivityDefinition.deleteMany({});
-  PlanDefinition.deleteMany({});
+afterAll(async () => {
+  await ActivityDefinition.deleteMany({});
+  await PlanDefinition.deleteMany({});
   app.close();
 })
