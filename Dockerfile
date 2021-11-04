@@ -12,6 +12,8 @@ COPY ["package.json", "package-lock.json*", "./"]
 
 #######################
 
+# RUN DB
+FROM mongo:5.0.3 as db
 CMD ["mongod"]
 
 # TEST
