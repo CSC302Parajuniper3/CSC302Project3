@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const vd = require('express-validator');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -15,12 +16,14 @@ function connectDb() {
 }
 connectDb();
 
+app.use(express.json());
+
 const ACTIVITY_RESOURCE_TYPE = 'ActivityDefinition';
 const PLAN_RESOURCE_TYPE = 'PlanDefinition';
 
 const RESOURCE_TYPE_TO_MODEL = {
-  ACTIVITY_RESOURCE_TYPE: ActivityDefinition,
-  PLAN_RESOURCE_TYPE: PlanDefinition
+  [ACTIVITY_RESOURCE_TYPE]: ActivityDefinition,
+  [PLAN_RESOURCE_TYPE]: PlanDefinition
 }
 
 const validateResourceType = (req, res, next) => {
@@ -44,7 +47,7 @@ const validateId = (req, res, next) => {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).send({ "Missing id in request" });
+    res.status(400).send({ error: "Missing id in request" });
   } else {
     next();
   }
@@ -112,13 +115,39 @@ app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, re
  * - :resourceType -> the type of resource being created.
  *      -> Can either be ACTIVITY_RESOURCE_TYPE or PLAN_RESOURCE_TYPE
  * 
+ * Body:
+ * This endpoint expects a body containing a JSON object.
+ * The body will be sanitized before processing
+ * Extra values in the JSON body will be ignored.
+ * If not all required fields of the schema are supplied by the body, a 400 error is returned. 
+ * 
  * Status:
- * - 404: resource type invalid.
- * - 500: internal error if model can't be found.
+ * - 400: params or body was incorrectly formatted / missing data.
+ * - 500: internal error if model can't be found or data can not be saved
  */
-app.post('/:resourceType', [validateResourceType], async (req, res) => {
+app.post('/:resourceType', validateResourceType, vd.body('id').trim().isAlphanumeric(), async (req, res) => {
   const {resourceType} = req.params;
   let model = RESOURCE_TYPE_TO_MODEL[resourceType];
+
+  // TODO: update this as schema changes
+  // TODO: perhaps split function into 2, 1 for each resource, and call correct one using another mapping object
+
+  // validation/santiation is done in middleware, so req.body is safe to use
+  let new_instance = new model({
+    id: req.body.id
+  })
+
+  new_instance.save((err, new_instance) => {
+    if (err) {
+      res.status(500).send({ 
+        error: `Could not save new ${resourceType} resource to database.`,
+        body: req.body
+      });
+    } else {
+      res.json(new_instance)
+    }
+  })
+  
 });
 
 var app_server = app.listen(port, () => {
