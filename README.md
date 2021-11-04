@@ -74,6 +74,8 @@ By using `docker-compose up -d <target>`, docker will run the application in the
 
 If you want to force a build, add the `--build` argument before the target. If you want to build without running, use the command `docker-compose build`
 
+Note: You want to include db if you're using e_dev/e_test/e_prod, as they all require the db.
+
 You can also run every target with the command below. Note that this means it runs both development AND production simultaneously.
 
     docker-compose up
@@ -95,7 +97,9 @@ Here are is the list of all currently available targets:
 
 Do not use the -d option in this case.
 
-Currently, you should see the output `"I am running a test!"` if you're running `e_test` or `"I am running!"` if you're running `e_dev'.
+Run with your test/dev/prod target and the db target.
+
+Currently, you should see the output `"I am running a test!"` if you're running `e_test db` or `"I am running!"` if you're running `e_dev db'.
 
 If you run 'e_test', you should see an execution of the unit tests. They should all pass.
 
