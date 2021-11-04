@@ -21,7 +21,7 @@ beforeEach(async () => {
 /**
  * Tests that a properly formatted POST to /ActivityDefinition returns 200 
  */
-test("Invalid Resource Type", (done) => {
+test("Activity insert success", (done) => {
 	request
 		.post('/ActivityDefinition')
 		.send({ id: 'test' })
@@ -33,7 +33,7 @@ test("Invalid Resource Type", (done) => {
 /**
  * Tests that a properly formatted POST to /PlanDefinition returns 200 
  */
-test("Invalid Resource Type", (done) => {
+test("Plan insert success", (done) => {
 	request
 		.post('/PlanDefinition')
 		.send({ id: 'test' })
@@ -58,7 +58,7 @@ test("Invalid Resource Type", (done) => {
 /**
  * Tests that a POST to root endpoint results in 400 error
  */
-test("Invalid Resource Type", (done) => {
+test("Root request", (done) => {
 	request
 		.post('/')
 		.send({ id: 'test' })
@@ -71,7 +71,7 @@ test("Invalid Resource Type", (done) => {
 /**
  * Tests that a POST without required keys in body results in 400 error
  */
-test("Invalid Resource Type", (done) => {
+test("Missing body keys", (done) => {
 	request
 		.post('/')
 		.send({ i_am_not_important: 'test' })
@@ -84,7 +84,7 @@ test("Invalid Resource Type", (done) => {
 /**
  * Tests that a POST without with non-alphanumeric id results in 400 error
  */
-test("Invalid Resource Type", (done) => {
+test("Invalid id", (done) => {
 	request
 		.post('/')
 		.send({ i_am_not_important: '$@($U)(*)(A @*!' })

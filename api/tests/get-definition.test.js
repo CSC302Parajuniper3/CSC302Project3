@@ -53,27 +53,31 @@ test("Record not found", (done) => {
   });
 });
 
-test("Record found", (done) => {
+test("Activity record found", (done) => {
   const mockActivityDefinitionId = `activity-example-administermedication`;
-  const mockPlanDefinitionId = `chf-bodyweight`;
 
   const mockActivityDefinition = ActivityDefinitionData.find(
     ActivityDefinition => ActivityDefinition.id === mockActivityDefinitionId
   );
 
+  expect(mockActivityDefinition).toBeTruthy();
+  expect(mockActivityDefinition.id).toEqual(mockActivityDefinitionId);
+
+  request.get(`/ActivityDefinition/${mockActivityDefinitionId}`).expect(200, function (err, res) {
+    expect(res.body.id).toEqual(mockActivityDefinition.id);
+    done();
+  });
+});
+
+test("Plan record found", (done) => {
+  const mockPlanDefinitionId = `chf-bodyweight`;
+
   const mockPlanDefinition = PlanDefinitionData.find(
     PlanDefinition => PlanDefinition.id === mockPlanDefinitionId
   );
 
-  expect(mockActivityDefinition).toBeTruthy();
-  expect(mockActivityDefinition.id).toEqual(mockActivityDefinitionId);
-
   expect(mockPlanDefinition).toBeTruthy();
   expect(mockPlanDefinition.id).toEqual(mockPlanDefinitionId);
-
-  request.get(`/ActivityDefinition/${mockActivityDefinitionId}`).expect(200, function (err, res) {
-    expect(res.body.id).toEqual(mockActivityDefinition.id);
-  });
 
   request.get(`/PlanDefinition/${mockPlanDefinitionId}`).expect(200, function (err, res) {
     expect(res.body.id).toEqual(mockPlanDefinition.id);
