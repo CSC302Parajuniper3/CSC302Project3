@@ -116,6 +116,7 @@ If you run 'e_dev', you should be able to use the endpoints from Postman.
 
 - If you get the following error while deploying: `Error while fetching server API version` then your issue might be permission issues with docker's socket. Run the (Linux) command `sudo chmod 666 /var/run/docker.sock`, which may solve the issue.
 
+- If you get the following error: `error checking context: 'no permission to read from '.../db_data/WiredTiger.turtle'`, then you need to change the permissions of the `db_data` folder. Run the linux command `sudo chmod -R 777 /path/to/db_data` to fix the issue. This is a common issue with running `docker-compose up --build e_test`.
 ---
 
 ## Heroku
