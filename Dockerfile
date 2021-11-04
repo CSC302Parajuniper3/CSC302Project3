@@ -12,6 +12,8 @@ COPY ["package.json", "package-lock.json*", "./"]
 
 #######################
 
+CMD ["mongod"]
+
 # TEST
 FROM base as test
 ENV NODE_ENV=development
