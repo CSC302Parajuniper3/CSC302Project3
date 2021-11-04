@@ -7,6 +7,7 @@ const ActivityDefinition = require('./models/activity-definition');
 const PlanDefinition = require('./models/plan-definition');
 
 var events = require('events');
+const { validate } = require('./models/activity-definition');
 
 function connectDb() {
   // todo: replace with remote db uri
@@ -17,22 +18,33 @@ connectDb();
 const ACTIVITY_RESOURCE_TYPE = 'ActivityDefinition';
 const PLAN_RESOURCE_TYPE = 'PlanDefinition';
 
-const VALID_RESOURCE_TYPES = ['ActivityDefinition', 'PlanDefinition']
+const RESOURCE_TYPE_TO_MODEL = {
+  ACTIVITY_RESOURCE_TYPE: ActivityDefinition,
+  PLAN_RESOURCE_TYPE: PlanDefinition
+}
 
-const validateResourceTypeAndId = (req, res, next) => {
-  const { resourceType, id } = req.params;
+const validateResourceType = (req, res, next) => {
+  const { resourceType } = req.params;
   let error = null;
 
-  if (!id) {
-    error = "Missing id in request";
-  } else if (!resourceType) {
+  if (!resourceType) {
     error = "Missing resourceType in request";
-  } else if (!VALID_RESOURCE_TYPES.includes(resourceType)) {
+  } else if (!RESOURCE_TYPE_TO_MODEL.hasOwnProperty(resourceType)) {
     error = `Invalid resourceType: ${resourceType}`;
   }
 
   if (error) {
     res.status(400).send({ error });
+  } else {
+    next();
+  }
+}
+
+const validateId = (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).send({ "Missing id in request" });
   } else {
     next();
   }
@@ -46,10 +58,10 @@ const validateResourceTypeAndId = (req, res, next) => {
  * - 404: resource type invalid.
  * - 500: internal error if model can't be found.
  */
-app.get('/listDefinitions', async (req, res) => {
+app.get('/listDefinitions', [validateResourceType], async (req, res) => {
   let resourceType = req.query.resourceType;
   let model = null;
-
+  
   if (resourceType === ACTIVITY_RESOURCE_TYPE) {
     model = ActivityDefinition;
   } else if (resourceType === PLAN_RESOURCE_TYPE) {
@@ -73,15 +85,9 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/:resourceType/:id', validateResourceTypeAndId, async (req, res) => {
+app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, res) => {
   const { resourceType, id } = req.params;
-  let model;
-
-  if (resourceType === ACTIVITY_RESOURCE_TYPE) {
-    model = ActivityDefinition;
-  } else if (resourceType === PLAN_RESOURCE_TYPE) {
-    model = PlanDefinition;
-  }
+  let model = RESOURCE_TYPE_TO_MODEL[resourceType];
 
   let record;
   try {
@@ -95,6 +101,24 @@ app.get('/:resourceType/:id', validateResourceTypeAndId, async (req, res) => {
   } else {
     res.status(404).send({ error: `Could not find requested ${resourceType} with id: ${id}` });
   }
+});
+
+/**
+ * POST /:resourceType
+ * 
+ * Sending a POST to /:resourceType is used to create a new guideline in the db
+ * 
+ * Params:
+ * - :resourceType -> the type of resource being created.
+ *      -> Can either be ACTIVITY_RESOURCE_TYPE or PLAN_RESOURCE_TYPE
+ * 
+ * Status:
+ * - 404: resource type invalid.
+ * - 500: internal error if model can't be found.
+ */
+app.post('/:resourceType', [validateResourceType], async (req, res) => {
+  const {resourceType} = req.params;
+  let model = RESOURCE_TYPE_TO_MODEL[resourceType];
 });
 
 var app_server = app.listen(port, () => {
