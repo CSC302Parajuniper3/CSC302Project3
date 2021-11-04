@@ -85,8 +85,20 @@ Here are is the list of all currently available targets:
 
 Do not use the -d option in this case.
 
-Currently, you should see the output `"I am running a test!"` if you're running `e_test` or `"I am running!"` if you're running `e_dev` or `e_prod`.
+Currently, you should see the output `"I am running a test!"` if you're running `e_test` or `"I am running!"` if you're running `e_dev'.
 If you run 'e_test', you should see an execution of the unit tests. They should all pass.
+
+If you run 'e_dev', you should be able to use the endpoints from Postman.
+
+Endpoints:
+/listDefinitions, QUERY resourceType:<ActivityDefinition OR PlanDefinition>
+Returns a list of defintion ids of the specified type or an empty [] if none exists.
+
+/<ActivityDefinition OR PlanDefinition>/<definiton ID>
+Returns the json of the specified definition id.
+
+/<ActivityDefinition OR PlanDefinition>, BODY: id: The string representing the definition
+Adds a definition with the specified id into the database.
 
 ### Troubleshooting
 
