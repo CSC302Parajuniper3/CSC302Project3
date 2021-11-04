@@ -8,9 +8,6 @@ services:
       - './db_data:/data/db/'
     ports:
       - 27017:27017
-      # - 27017
-    # environment:
-    #   - CHOKIDAR_USEPOLLING=true
   
   e_dev:
     container_name: jshd302_express_dev
@@ -25,6 +22,7 @@ services:
       - 3001:3000
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - DB_URI="${MONGO_DB_URI}"
   
   e_prod:
     container_name: jshd302_express_prod

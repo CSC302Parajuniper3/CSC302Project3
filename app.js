@@ -11,8 +11,7 @@ var events = require('events');
 const { validate } = require('./models/activity-definition');
 
 function connectDb() {
-  // todo: replace with remote db uri
-  mongoose.connect(process.env.DB_URI);
+  mongoose.connect(process.env.DB_URI || "mongodb://127.0.0.1:27017/test");
 }
 connectDb();
 
