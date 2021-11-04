@@ -138,8 +138,8 @@ Our members are responsible for reaching the acceptance criteria of their respec
 - Create db/schemas ad populate our downloaded guideline definitions (James) [In progress]
 - We should be able to read a list of all guidelines [Completed]
 - We should be able to retrieve a specific guideline [Completed]
-- We should be able to add a new guideline to the db [In progress]
-- We should additionally verify the above functionality using manual testing with Postman (Henry/Daniel/Stew) [In progress]
+- We should be able to add a new guideline to the db [Completed]
+- We should additionally verify the above functionality using manual testing with Postman (Henry/Daniel/Stew) [Complete]
   
 ## Your validation process: how will you know that you have achieved this milestone?
   
