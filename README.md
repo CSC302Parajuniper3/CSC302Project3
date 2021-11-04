@@ -61,13 +61,22 @@ Also please ensure that the docker service is running. If it is not running, you
 Once docker is running, simply build and run the project:
 
     docker-compose up <target>
-    Example: docker-compose up e_dev
+
+Here are some examples
+
+    docker-compose up e_dev
+    docker-compose up db
+    docker-compose up e_dev db
 
 This will automatically build an image if one does not exist, and then run the application. If you see errors regarding permissions, try running `sudo docker-compose up e_dev`
 
 By using `docker-compose up -d <target>`, docker will run the application in the background as a daemon.
 
 If you want to force a build, add the `--build` argument before the target. If you want to build without running, use the command `docker-compose build`
+
+You can also run every target with the command below. Note that this means it runs both development AND production simultaneously.
+
+    docker-compose up
 
 ### Targets
 
@@ -77,6 +86,7 @@ The docker-compose configuration contains seperate targets for test, development
 
 Here are is the list of all currently available targets:
 
++ `db`     -- MongoDB database
 + `e_test` -- Test build for express.js server.
 + `e_dev`  -- Development build for express.js server.
 + `e_prod` -- Production build for express.js server.
