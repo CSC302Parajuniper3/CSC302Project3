@@ -126,6 +126,14 @@ app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, re
  * - 500: internal error if model can't be found or data can not be saved
  */
 app.post('/:resourceType', validateResourceType, vd.body('id').trim().isAlphanumeric(), async (req, res) => {
+  const errors = vd.validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      error: "Body data has failed our validation and/or sanitation checks.",
+      error_messages: errors.array().map(er => er.msg)
+    })
+  }
+  
   const {resourceType} = req.params;
   let model = RESOURCE_TYPE_TO_MODEL[resourceType];
 
@@ -146,7 +154,7 @@ app.post('/:resourceType', validateResourceType, vd.body('id').trim().isAlphanum
     } else {
       res.json(new_instance)
     }
-  })
+  });
   
 });
 
