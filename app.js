@@ -53,6 +53,21 @@ const validateId = (req, res, next) => {
 }
 
 /**
+ * Increments a version number in string format and returns it
+ * @param {string} versionString version string with . delimiters
+ * @returns n+1.x.x string given n.x.x
+ */
+function getNextVersion(versionString) {
+  if (typeof versionString != 'string') {
+    return null;
+  }
+  versions = versionString.split('.');
+  versions[0] = parseInt(versions[0]) + 1;
+
+  return versions.join('.');
+}
+
+/**
  * /listDefinitions:
  * req: query.resourceType: A string of a resourceType (see above)
  * res: A list of definitionIds of the specified resourceType
@@ -63,7 +78,7 @@ const validateId = (req, res, next) => {
 app.get('/listDefinitions', async (req, res) => {
   let resourceType = req.query.resourceType;
   let model = null;
-  
+
   if (resourceType === ACTIVITY_RESOURCE_TYPE) {
     model = ActivityDefinition;
   } else if (resourceType === PLAN_RESOURCE_TYPE) {
@@ -83,6 +98,21 @@ app.get('/listDefinitions', async (req, res) => {
   });
 });
 
+/**
+ * GET /:resourceType/:id 
+ * 
+ * Endpoint to retrieve a guideline JSON from the db
+ * 
+ * Params:
+ * - :resourceType -> the type of resource being created.
+ *      -> Can either be ACTIVITY_RESOURCE_TYPE or PLAN_RESOURCE_TYPE
+ * - :id -> the FHIR id of the resource to retreive
+ * 
+ * Status:
+ * - 400: params incorrectly used (e.g. incorrect resource type)
+ * - 404: specified record id cannot be found
+ * - 500: internal error if model can't be found or data can not be fetched
+ */
 app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, res) => {
   const { resourceType, id } = req.params;
   let model = RESOURCE_TYPE_TO_MODEL[resourceType];
@@ -91,14 +121,86 @@ app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, re
   try {
     record = await model.findOne({ id });
   } catch (error) {
-    res.status(500).send({ error: `An error occurred internally while fetching ${resourceType} with id: ${id}` });
+    res.status(500).send({
+      error: `An error occurred internally while fetching ${resourceType} with id: ${id}`
+    });
   }
 
   if (record) {
     res.send(record);
   } else {
-    res.status(404).send({ error: `Could not find requested ${resourceType} with id: ${id}` });
+    res.status(404).send({
+      error: `Could not find requested ${resourceType} with id: ${id}`
+    });
   }
+});
+
+
+/**
+ * PUT /:resourceType/:id 
+ * 
+ * Endpoint to update an existing guideline record in the db
+ * 
+ * Params:
+ * - :resourceType -> the type of resource being created.
+ *      -> Can either be ACTIVITY_RESOURCE_TYPE or PLAN_RESOURCE_TYPE
+ * - :id -> the FHIR id of the resource to update
+ * 
+ * Status:
+ * - 400: params or body incorrectly set (e.g. incorrect resource type, empty body JSON)
+ * - 404: specified record id cannot be found
+ * - 500: internal error if model can't be found or data can not be updated
+ */
+ app.put('/:resourceType/:id', [validateId, validateResourceType], async (req, res) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res.status(400).json({
+      error: "Body data has failed our validation and/or sanitation checks.",
+      message: "Body cannot be empty"
+    });
+  }
+
+  const { resourceType, id } = req.params;
+  let model = RESOURCE_TYPE_TO_MODEL[resourceType];
+
+  let record;
+  try {
+    record = await model.findOne({ id });
+  } catch (err) {
+    return res.status(500).send({
+      error: `An error occurred internally while fetching ${resourceType} with id: ${id}`
+    });
+  }
+
+  if (!record) {
+    return res.status(404).send({
+      error: `Could not find requested ${resourceType} with id: ${id}`
+    });
+  }
+
+  const nextVersion = getNextVersion(record.version);
+  if (!nextVersion) {
+    return res.status(500).send({
+      error: `An error occurred internally while changing the version of ${resourceType} with id: ${id}`
+    });
+  }
+
+  const updateData = {
+    ...req.body,
+    id,
+    version: nextVersion,
+    updated: Date.now()
+  };
+
+  let result;
+  try {
+    result = await model.updateOne({ id }, updateData);
+  } catch (err) {
+    return res.status(500).send({
+      error: `An error occurred internally while updating ${resourceType} with id: ${id}`,
+    });
+  }
+
+  res.send(result);
 });
 
 /**
@@ -120,29 +222,29 @@ app.get('/:resourceType/:id', [validateId, validateResourceType], async (req, re
  * - 400: params or body was incorrectly formatted / missing data.
  * - 500: internal error if model can't be found or data can not be saved
  */
-app.post('/:resourceType', validateResourceType, vd.body('id').trim().isAlphanumeric(), async (req, res) => {
+app.post('/:resourceType', validateResourceType, vd.body('id').trim(), async (req, res) => {
   const errors = vd.validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
       error: "Body data has failed our validation and/or sanitation checks.",
-      error_messages: errors.array().map(er => er.msg)
+      message: errors.array().map(er => er.msg)
     })
   }
-  
-  const {resourceType} = req.params;
-  let model = RESOURCE_TYPE_TO_MODEL[resourceType];
 
-  // TODO: update this as schema changes
-  // TODO: perhaps split function into 2, 1 for each resource, and call correct one using another mapping object
+  const { resourceType } = req.params;
+  let model = RESOURCE_TYPE_TO_MODEL[resourceType];
 
   // validation/santiation is done in middleware, so req.body is safe to use
   let new_instance = new model({
-    id: req.body.id
+    ...req.body,
+    resourceType,
+    version: "1.0.0",
+    updated: Date.now(),
   })
 
   new_instance.save((err, new_instance) => {
     if (err) {
-      res.status(500).send({ 
+      res.status(500).send({
         error: `Could not save new ${resourceType} resource to database.`,
         body: req.body
       });
@@ -150,7 +252,6 @@ app.post('/:resourceType', validateResourceType, vd.body('id').trim().isAlphanum
       res.json(new_instance)
     }
   });
-  
 });
 
 var app_server = app.listen(port, () => {

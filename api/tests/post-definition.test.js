@@ -81,19 +81,6 @@ test("Missing body keys", (done) => {
 		});
 });
 
-/**
- * Tests that a POST without with non-alphanumeric id results in 400 error
- */
-test("Invalid id", (done) => {
-	request
-		.post('/')
-		.send({ i_am_not_important: '$@($U)(*)(A @*!' })
-		.expect(400, (err, res) => {
-			expect(res.body.error);
-			done();
-		});
-});
-
 afterAll(async () => {
 	// Clears all data from db
 	await ActivityDefinition.deleteMany({});

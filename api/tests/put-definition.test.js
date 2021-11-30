@@ -19,23 +19,53 @@ beforeAll(async () => {
   for (activityMock of ActivityDefinitionData) {
     activitiesToInsert.push(new ActivityDefinition(activityMock));
   }
-  await ActivityDefinition.insertMany(activitiesToInsert).catch((err) => {
-    return console.error(err);
+  ActivityDefinition.insertMany(activitiesToInsert).catch((err) => {
+    console.error(err);
   });
 
   const plansToInsert = [];
   for (planMock of PlanDefinitionData) {
     plansToInsert.push(new PlanDefinition(planMock));
   }
-  await PlanDefinition.insertMany(plansToInsert).catch((err) => {
+  PlanDefinition.insertMany(plansToInsert).catch((err) => {
     return console.error(err);
   });
 })
 
+test("Missing/empty body", (done) => {
+  const mockActivityDefinitionId = `activity-example-administermedication`;
+  const mockPlanDefinitionId = `chf-bodyweight`;
+  const bodyDataError = "Body data has failed our validation and/or sanitation checks.";
+
+  request.put(`/ActivityDefinition/${mockActivityDefinitionId}`)
+    .expect(400, function (err, res) {
+      expect(res.body.error).toEqual(bodyDataError);
+    });
+
+  request.put(`/PlanDefinition/${mockPlanDefinitionId}`)
+    .expect(400, function (err, res) {
+      expect(res.body.error).toEqual(bodyDataError);
+    });
+
+  request.put(`/ActivityDefinition/${mockActivityDefinitionId}`)
+    .send({})
+    .expect(400, function (err, res) {
+      expect(res.body.error).toEqual(bodyDataError);
+    });
+
+  request.put(`/PlanDefinition/${mockPlanDefinitionId}`)
+    .send({})
+    .expect(400, function (err, res) {
+      expect(res.body.error).toEqual(bodyDataError);
+      done();
+    });
+});
+
 test("Bad query", (done) => {
   const fakeId = `fakeid-${(Math.random() + 1).toString(36).substring(2)}`;
   
-  request.get(`/bad-resource-type/${fakeId}`)
+  request.put(`/bad-resource-type/${fakeId}`)
+    .send({ description: "test update" })
     .expect(400, function (err, res) {
       expect(res.body.error).toEqual("Invalid resourceType: bad-resource-type");
       done();
@@ -45,12 +75,14 @@ test("Bad query", (done) => {
 test("Record not found", (done) => {
   const fakeId = `fakeid-${(Math.random() + 1).toString(36).substring(2)}`;
 
-  request.get(`/ActivityDefinition/${fakeId}`)
+  request.put(`/ActivityDefinition/${fakeId}`)
+    .send({ description: "test update" })
     .expect(404, function (err, res) {
       expect(res.body.error).toEqual(`Could not find requested ActivityDefinition with id: ${fakeId}`);
     });
 
-  request.get(`/PlanDefinition/${fakeId}`)
+  request.put(`/PlanDefinition/${fakeId}`)
+    .send({ description: "test update" })
     .expect(404, function (err, res) {
       expect(res.body.error).toEqual(`Could not find requested PlanDefinition with id: ${fakeId}`);
       done();
@@ -67,9 +99,10 @@ test("Activity record found", (done) => {
   expect(mockActivityDefinition).toBeTruthy();
   expect(mockActivityDefinition.id).toEqual(mockActivityDefinitionId);
 
-  request.get(`/ActivityDefinition/${mockActivityDefinitionId}`)
+  request.put(`/ActivityDefinition/${mockActivityDefinitionId}`)
+    .send({ description: "test update" })
     .expect(200, function (err, res) {
-      expect(res.body.id).toEqual(mockActivityDefinition.id);
+      expect(res.body.modifiedCount).toEqual(1);
       done();
     });
 });
@@ -84,9 +117,10 @@ test("Plan record found", (done) => {
   expect(mockPlanDefinition).toBeTruthy();
   expect(mockPlanDefinition.id).toEqual(mockPlanDefinitionId);
 
-  request.get(`/PlanDefinition/${mockPlanDefinitionId}`)
+  request.put(`/PlanDefinition/${mockPlanDefinitionId}`)
+    .send({ description: "test update" })
     .expect(200, function (err, res) {
-      expect(res.body.id).toEqual(mockPlanDefinition.id);
+      expect(res.body.modifiedCount).toEqual(1);
       done();
     });
 });
