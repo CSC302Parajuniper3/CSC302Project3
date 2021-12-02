@@ -20,6 +20,7 @@ test("Add activity definition", (done) => {
     let test_id = 'test'
     let test_desc = 'test description'
 
+    // Adding the test guideline
   request
       .post('/' + app.ACTIVITY_RESOURCE_TYPE)
       .send({ id: test_id })
@@ -27,10 +28,12 @@ test("Add activity definition", (done) => {
         done();
       });
 
+    // Ensures it exists when retriving list of all guidelines
   request.get('/listDefinitions').query({ resourceType: app.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual([test_id]);
   });
 
+  // Updates the description
   request.put(`/ActivityDefinition/${test_id}`)
       .send({ description: test_desc })
       .expect(200, function (err, res) {
@@ -38,7 +41,7 @@ test("Add activity definition", (done) => {
         done();
       });
 
-
+  // Gets the guideline and checks the description was updated.
   request.get(`/ActivityDefinition/${test_id}`)
       .expect(200, function (err, res) {
           expect(res.body.id).toEqual(test_id);
