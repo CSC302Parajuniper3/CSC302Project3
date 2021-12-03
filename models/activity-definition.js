@@ -36,7 +36,15 @@ const ActivityDefinitionSchema = new mongoose.Schema({
     code: {},
     intent: String,
     doNotPerform: Boolean,
-    dynamicValue: []
+    dynamicValue: [],
+    deleted: {
+        type: Date,
+        default: null
+    }
+});
+
+ActivityDefinitionSchema.pre('findOne', function() {
+    this.where('deleted', null);
 });
 
 const ActivityDefinition = mongoose.model('ActivityDefinition', ActivityDefinitionSchema);

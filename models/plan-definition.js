@@ -33,7 +33,15 @@ const PlanDefinitionSchema = new mongoose.Schema({
     description: String,
     jurisdiction: [],
     goal: [],
-    action: []
+    action: [],
+    deleted: {
+        type: Date,
+        default: null
+    }
+});
+
+PlanDefinitionSchema.pre('findOne', function() {
+    this.where('deleted', null);
 });
 
 const PlanDefinition = mongoose.model('PlanDefinition', PlanDefinitionSchema);

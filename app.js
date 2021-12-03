@@ -93,7 +93,7 @@ app.get('/listDefinitions', async (req, res) => {
     return;
   }
 
-  model.distinct('id', function (err, listIds) {
+  model.where('deleted', null).distinct('id', function (err, listIds) {
     res.send({ ids: listIds });
   });
 });
@@ -252,6 +252,57 @@ app.post('/:resourceType', validateResourceType, vd.body('id').trim(), async (re
       res.json(new_instance)
     }
   });
+});
+
+/**
+ * DELETE /:resourceType/:id 
+ * 
+ * Endpoint to delete a guideline record in the db.
+ * 
+ * Params:
+ * - :resourceType -> the type of resource being created.
+ *      -> Can either be ACTIVITY_RESOURCE_TYPE or PLAN_RESOURCE_TYPE
+ * - :id -> the FHIR id of the resource to delete
+ * 
+ * Status:
+ * - 400: params or body incorrectly set (e.g. incorrect resource type)
+ * - 404: specified record id cannot be found
+ * - 500: internal error if model can't be found or data can not be updated
+ */
+app.delete('/:resourceType/:id', [validateId, validateResourceType], async (req, res) => {
+  const { resourceType, id } = req.params;
+  let model = RESOURCE_TYPE_TO_MODEL[resourceType];
+
+  let record;
+  try {
+    record = await model.findOne({ id });
+  } catch (err) {
+    return res.status(500).send({
+      error: `An error occurred internally while fetching ${resourceType} with id: ${id}`
+    });
+  }
+
+  if (!record) {
+    return res.status(404).send({
+      error: `Could not find requested ${resourceType} with id: ${id}`
+    });
+  }
+
+  const updateData = {
+    ...req.body,
+    deleted: Date.now()
+  };
+
+  let result;
+  try {
+    result = await model.updateOne({ id }, updateData);
+  } catch (err) {
+    return res.status(500).send({
+      error: `An error occurred while deleting ${resourceType} with id: ${id}`,
+    });
+  }
+
+  res.send(result);
 });
 
 var app_server = app.listen(port, () => {
