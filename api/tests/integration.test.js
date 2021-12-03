@@ -24,7 +24,7 @@ test("Add activity definition", (done) => {
         .post('/' + app.ACTIVITY_RESOURCE_TYPE)
         .send({ id: test_id })
         .expect(200)
-        .then ((res1) => {
+        .then((res1) => {
             request.get('/listDefinitions')
                 .query({ resourceType: app.ACTIVITY_RESOURCE_TYPE })
                 .expect(200)
@@ -36,16 +36,24 @@ test("Add activity definition", (done) => {
                         .then((res3) => {
                             expect(res3.body.modifiedCount).toEqual(1);
                             request.get(`/ActivityDefinition/${test_id}`)
-                                .expect(200).then((res4) => {
-                                expect(res4.body.id).toEqual(test_id);
-                                expect(res4.body.description).toEqual(test_desc);
-                                // Do delete here.
-                                done();
+                                .expect(200)
+                                .then((res4) => {
+                                    expect(res4.body.id).toEqual(test_id);
+                                    expect(res4.body.description).toEqual(test_desc);
 
-                            })
+                                    request.delete(`/ActivityDefinition/${test_id}`)
+                                        .expect(200)
+                                        .then((res5) => {
+                                            expect(res5.body.modifiedCount).toEqual(1);
+                                            request.get(`/ActivityDefinition/${test_id}`).expect(404).then(done());
+                                        });
+
+                                });
                         });
                 });
-        })
+        });
+
+
 });
 
 test("Add plan definition", (done) => {
@@ -68,16 +76,23 @@ test("Add plan definition", (done) => {
                         .then((res3) => {
                             expect(res3.body.modifiedCount).toEqual(1);
                             request.get(`/PlanDefinition/${test_id}`)
-                                .expect(200).then((res4) => {
-                                expect(res4.body.id).toEqual(test_id);
-                                expect(res4.body.description).toEqual(test_desc);
-                                // Do delete here.
-                                done();
+                                .expect(200)
+                                .then((res4) => {
+                                    expect(res4.body.id).toEqual(test_id);
+                                    expect(res4.body.description).toEqual(test_desc);
 
-                            })
+                                    request.delete(`/PlanDefinition/${test_id}`)
+                                        .expect(200)
+                                        .then((res5) => {
+                                            expect(res5.body.modifiedCount).toEqual(1);
+                                            request.get(`/PlanDefinition/${test_id}`).expect(404).then(done());
+                                        });
+
+                                });
+
                         });
                 });
-        })
+        });
 });
 
 test("Bad query", (done) => {
@@ -124,13 +139,19 @@ test("Invalid update", (done) => {
                         .expect(404)
                         .then((res3) => {
                             request.get(`/PlanDefinition/${test_id}`)
-                                .expect(200).then((res4) => {
-                                expect(res4.body.id).toEqual(test_id);
-                                expect(res4.body.description).not.toEqual(test_desc);
-                                // Do delete here.
-                                done();
+                                .expect(200)
+                                .then((res4) => {
+                                    expect(res4.body.id).toEqual(test_id);
+                                    expect(res4.body.description).not.toEqual(test_desc);
 
-                            })
+                                    request.delete(`/PlanDefinition/${test_id}`)
+                                        .expect(200)
+                                        .then((res5) => {
+                                            expect(res5.body.modifiedCount).toEqual(1);
+                                            request.get(`/PlanDefinition/${test_id}`).expect(404).then(done());
+                                        });
+
+                                });
                         });
                 });
         })
@@ -161,6 +182,7 @@ test("Adding duplicate", (done) => {
                 });
         })
 });
+
 
 
 afterAll(async () => {
