@@ -16,83 +16,78 @@ beforeEach(async () => {
     });
 })
 
-test("Add activity definition", (done) => {
-    let test_id = 'test'
-    let test_desc = 'test description'
+function verify_all(id, resource_type, update_val, done) {
+    params = {
+        id: id,
+        resource_type: resource_type,
+        update_val: update_val,
+        done: done
+    }
 
+    verify_add(params);
+}
+
+function verify_add(params) {
     request
-        .post('/' + app.ACTIVITY_RESOURCE_TYPE)
-        .send({ id: test_id })
+        .post(`/${params.resource_type}`)
+        .send({ id: params.id })
         .expect(200)
-        .then((res1) => {
-            request.get('/listDefinitions')
-                .query({ resourceType: app.ACTIVITY_RESOURCE_TYPE })
-                .expect(200)
-                .then((res2) => {
-                    expect(res2.body.ids.sort()).toEqual([test_id]);
-                    request.put(`/ActivityDefinition/${test_id}`)
-                        .send({description: test_desc})
-                        .expect(200)
-                        .then((res3) => {
-                            expect(res3.body.modifiedCount).toEqual(1);
-                            request.get(`/ActivityDefinition/${test_id}`)
-                                .expect(200)
-                                .then((res4) => {
-                                    expect(res4.body.id).toEqual(test_id);
-                                    expect(res4.body.description).toEqual(test_desc);
-
-                                    request.delete(`/ActivityDefinition/${test_id}`)
-                                        .expect(200)
-                                        .then((res5) => {
-                                            expect(res5.body.modifiedCount).toEqual(1);
-                                            request.get(`/ActivityDefinition/${test_id}`).expect(404).then(done());
-                                        });
-
-                                });
-                        });
-                });
+        .then((res) => {
+            verify_list(params);
         });
+}
 
+function verify_list(params) {
+    request.get('/listDefinitions')
+        .query({ resourceType: params.resource_type })
+        .expect(200)
+        .then((res) => {
+            expect(res.body.ids.sort()).toEqual([params.id]);
+            verify_update(params);
+        });
+}
 
+function verify_update(params) {
+    request.put(`/${params.resource_type}/${params.id}`)
+        .send({description: params.update_val})
+        .expect(200)
+        .then((res) => {
+            expect(res.body.modifiedCount).toEqual(1);
+            verify_get(params);
+        });
+}
+
+function verify_get(params) {
+    request.get(`/${params.resource_type}/${params.id}`)
+        .expect(200)
+        .then((res4) => {
+            expect(res4.body.id).toEqual(params.id);
+            expect(res4.body.description).toEqual(params.update_val);
+            verify_delete(params);
+        });
+}
+
+function verify_delete(params) {
+    request.delete(`/${params.resource_type}/${params.id}`)
+        .expect(200)
+        .then((res5) => {
+            expect(res5.body.modifiedCount).toEqual(1);
+            request.get(`/${params.resource_type}/${params.id}`).expect(404).then(params.done());
+        });
+}
+
+test("Add activity definition", (done) => {
+    let test_id = 'test_act'
+    let test_desc = 'test description for act'
+
+    verify_all(test_id, app.ACTIVITY_RESOURCE_TYPE, test_desc, done);
 });
 
 test("Add plan definition", (done) => {
-    let test_id = 'test'
-    let test_desc = 'test description'
+    let test_id = 'test_plan'
+    let test_desc = 'test description for plan'
 
-    request
-        .post('/' + app.PLAN_RESOURCE_TYPE)
-        .send({ id: test_id })
-        .expect(200)
-        .then ((res1) => {
-            request.get('/listDefinitions')
-                .query({ resourceType: app.PLAN_RESOURCE_TYPE })
-                .expect(200)
-                .then((res2) => {
-                    expect(res2.body.ids.sort()).toEqual([test_id]);
-                    request.put(`/PlanDefinition/${test_id}`)
-                        .send({description: test_desc})
-                        .expect(200)
-                        .then((res3) => {
-                            expect(res3.body.modifiedCount).toEqual(1);
-                            request.get(`/PlanDefinition/${test_id}`)
-                                .expect(200)
-                                .then((res4) => {
-                                    expect(res4.body.id).toEqual(test_id);
-                                    expect(res4.body.description).toEqual(test_desc);
-
-                                    request.delete(`/PlanDefinition/${test_id}`)
-                                        .expect(200)
-                                        .then((res5) => {
-                                            expect(res5.body.modifiedCount).toEqual(1);
-                                            request.get(`/PlanDefinition/${test_id}`).expect(404).then(done());
-                                        });
-
-                                });
-
-                        });
-                });
-        });
+    verify_all(test_id, app.PLAN_RESOURCE_TYPE, test_desc, done);
 });
 
 test("Bad query", (done) => {
