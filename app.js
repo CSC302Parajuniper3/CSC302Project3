@@ -255,7 +255,7 @@ app.post('/:resourceType', validateResourceType, vd.body('id').trim(), async (re
 });
 
 /**
- * DELETE /:resourceType/:id 
+ * DELETE /:resourceType/:id
  * 
  * Endpoint to delete a guideline record in the db.
  * 
