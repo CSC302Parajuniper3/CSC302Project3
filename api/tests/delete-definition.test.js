@@ -75,7 +75,7 @@ test("Activity record found and deleted", (done) => {
 });
 
 test("Plan record found and deleted", (done) => {
-  const mockPlanDefinitionId = `Plan-example-administermedication`;
+  const mockPlanDefinitionId = `chf-bodyweight`;
 
   const mockPlanDefinition = PlanDefinitionData.find(
     PlanDefinition => PlanDefinition.id === mockPlanDefinitionId
