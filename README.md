@@ -148,76 +148,193 @@ Runs the test suites of the project.
 
 ## Endpoints:
 
-- **/::resourceType::**
-  - Parameters
-    - `resourceType`:
-      - Type of resource to retrieve
-      - Values: <**ActivityDefinition**||**PlanDefinition**>
-  - **GET**
-    - Returns a list of defintion ids of the specified type or an empty [] if none 
-    - Status Codes
-      - **200**: Request OK
-      - **404**: resource type invalid.
-      - **500**: internal error if model can't be found.
-    -
-          GET http://localhost:3001/ActivityDefinition
-          ---------------------
-          {
-            "ids": []
-          }
-  - **POST**
-    - Endpoint to create a new guideline in the DB. Returns copy of newly created guideline.
-    - Body
-      - Request MUST contain a body containing the record data in JSON format. The precise formatting for this data can be found in the [Schemas](###Schemas) section of this document.
-    - Status Codes
-      - **200**: Request OK
-      - **400**: params or body was incorrectly formatted / missing data.
-      - **500**: internal error if model can't be found or data can not be saved
-    -
-          POST http://localhost:3001/PlanDefinition
-          ---------------------
-          TODO:
-- **/::resourceType::/::id::**
-  - Parameters 
-    - `resourceType`
-      - Type of resource
-      - Values: <**ActivityDefinition**||**PlanDefinition**>
-    - `id` 
-      - Resource ID
-  - **GET**
-    - Endpoint to retrieve a guideline JSON from the DB
-    - Status Codes
-      - **200**: Request OK
-      - **400**: params incorrectly used (e.g. incorrect resource type)
-      - **404**: specified record id cannot be found
-      - **500**: internal error if model can't be found or data can not be fetched
-    -
-          GET http://localhost:3001/PlanDefinition/1
-          ---------------------
-          TODO:
-  - **PUT** 
-    - Endpoint to update an existing guideline record in the DB
-    - Body
-      - Request MUST contain a body containing the record data in JSON format. The precise formatting for this data can be found in the [Schemas](###Schemas) section of this document.
-    - Status Codes
-      - **200**: Request OK
-      - **400**: params or body incorrectly set (e.g. incorrect resource type, empty body JSON)
-      - **404**: specified record id cannot be found
-      - **500**: internal error if model can't be found or data can not be updated
-    -
-          PUT http://localhost:3001/PlanDefinition/1
-          ---------------------
-          TODO:
-  - **DELETE** 
-    - Endpoint to delete a guideline record in the db.
-    - Status Codes
-      - **200**: Request OK
-      - **404**: specified record id cannot be found
-      - **500**: internal error if model can't be found or data can not be updated
-    -
-          DELETE http://localhost:3001/PlanDefinition/1
-          ---------------------
-          TODO:
+### **/::resourceType::**
+- Parameters
+  - `resourceType`:
+    - Type of resource to retrieve
+    - Values: <**ActivityDefinition**||**PlanDefinition**>
+- **GET**
+  - Returns a list of defintion ids of the specified type or an empty [] if none 
+  - Status Codes
+    - **200**: Request OK
+    - **404**: resource type invalid.
+    - **500**: internal error if model can't be found.
+  -
+        GET /PlanDefinition HTTP/1.1
+        -------------------------------------
+        HTTP/1.1 200 OK
+        X-Powered-By: Express
+        Content-Type: application/json; charset=utf-8
+        
+        {"ids":["test"]}
+- **POST**
+  - Endpoint to create a new guideline in the DB. Returns copy of newly created guideline.
+  - Body
+    - Request MUST contain a body containing the record data in JSON format. The precise formatting for this data can be found in the [Schemas](###Schemas) section of this document.
+  - Status Codes
+    - **200**: Request OK
+    - **400**: params or body was incorrectly formatted / missing data.
+    - **500**: internal error if model can't be found or data can not be saved
+  -
+        POST /PlanDefinition HTTP/1.1
+        Content-Type: application/json
+        
+        {
+        "id": "test",
+        "resourceType": "PlanDefinition",
+        "url": "http://example.com",
+        "name": "J. Doe",
+        "title": "My Record",
+        "status": "In Progress",
+        "date": "2017-09-04",
+        "publisher": "Company Inc.",
+        "description": "This is a mock record for use as in API documentation"
+        }
+        -------------------------------------
+        HTTP/1.1 200 OK
+        X-Powered-By: Express
+        Content-Type: application/json; charset=utf-8
+        
+        {"id":"test","resourceType":"PlanDefinition","extension":[],"url":"http://example.com","version":"1.0.0","name":"J. Doe","title":"My Record","status":"In Progress","date":"2017-09-04T00:00:00.000Z","updated":"2021-12-04T04:32:50.138Z","publisher":"Company Inc.","description":"This is a mock record for use as in API documentation","jurisdiction":[],"goal":[],"action":[],"deleted":null,"_id":"61aaef72e48d8fd0ceea3eb6","__v":0}
+
+### **/::resourceType::/::id::**
+- Parameters 
+  - `resourceType`
+    - Type of resource
+    - Values: <**ActivityDefinition**||**PlanDefinition**>
+  - `id` 
+    - Resource ID
+- **GET**
+  - Endpoint to retrieve a guideline JSON from the DB
+  - Status Codes
+    - **200**: Request OK
+    - **400**: params incorrectly used (e.g. incorrect resource type)
+    - **404**: specified record id cannot be found
+    - **500**: internal error if model can't be found or data can not be fetched
+  -
+        GET /PlanDefinition/test HTTP/1.1
+        -------------------------------------
+        HTTP/1.1 200 OK
+        X-Powered-By: Express
+        Content-Type: application/json; charset=utf-8
+        
+        {"_id":"61aaef72e48d8fd0ceea3eb6","id":"test","resourceType":"PlanDefinition","extension":[],"url":"http://example.com","version":"1.0.0","name":"J. Doe","title":"My Record","status":"In Progress","date":"2017-09-04T00:00:00.000Z","updated":"2021-12-04T04:32:50.138Z","publisher":"Company Inc.","description":"This is a mock record for use as in API documentation","jurisdiction":[],"goal":[],"action":[],"deleted":null,"__v":0}
+- **PUT** 
+  - Endpoint to update an existing guideline record in the DB
+  - Body
+    - Request MUST contain a body containing the updated record data in JSON format. Not all fields are required; only the fields that will be updated need to be supplied
+  - Status Codes
+    - **200**: Request OK
+    - **400**: params or body incorrectly set (e.g. incorrect resource type, empty body JSON)
+    - **404**: specified record id cannot be found
+    - **500**: internal error if model can't be found or data can not be updated
+  -
+        PUT /PlanDefinition/test HTTP/1.1
+        Content-Type: application/json
+        
+        {
+        "title": "A Brand New Record"
+        }
+        -------------------------------------
+        HTTP/1.1 200 OK
+        X-Powered-By: Express
+        Content-Type: application/json; charset=utf-8
+        
+        {"acknowledged":true,"modifiedCount":1,"upsertedId":null,"upsertedCount":0,"matchedCount":1}
+- **DELETE** 
+  - Endpoint to delete a guideline record in the DB.
+  - Status Codes
+    - **200**: Request OK
+    - **404**: specified record id cannot be found
+    - **500**: internal error if model can't be found or data can not be updated
+  -
+        DELETE /PlanDefinition/test HTTP/1.1
+        -------------------------------------
+        HTTP/1.1 200 OK
+        X-Powered-By: Express
+        Content-Type: application/json; charset=utf-8
+
+        {"acknowledged":true,"modifiedCount":1,"upsertedId":null,"upsertedCount":0,"matchedCount":1}
 
 ## Schemas
-lorem ipsum
+
+### **ActivityDefinition**
+    id: {
+      type: String,
+      minLength: 1,
+      unique: true,
+      required: true
+    },
+    resourceType: {
+      type: String,
+      minLength: 10,
+      default: "ActivityDefinition"
+    },
+    meta: {},
+    extension: [],
+    url: String,
+    version: { 
+      type: String, 
+      default: "1.0.0"
+    },
+    name: String,
+    title: String,
+    status: String,
+    experimental: Boolean,
+    date: Date,
+    updated: {
+      type: Date,
+      default: Date.now()
+    },
+    publisher: String,
+    description: String,
+    jurisdiction: [],
+    kind: String,
+    profile: String,
+    code: {},
+    intent: String,
+    doNotPerform: Boolean,
+    dynamicValue: [],
+    deleted: {
+      type: Date,
+      default: null
+    }
+
+### **PlanDefinition**
+    id: {
+      type: String,
+      minLength: 1,
+      unique: true,
+      required: true
+    },
+    resourceType: {
+      type: String,
+      minLength: 10,
+      default: "PlanDefinition"
+    },
+    meta: {},
+    extension: [],
+    url: String,
+    version: { 
+      type: String, 
+      default: "1.0.0"
+    },
+    name: String,
+    title: String,
+    type: {},
+    status: String,
+    experimental: Boolean,
+    date: Date,
+    updated: {
+      type: Date,
+      default: Date.now()
+    },
+    publisher: String,
+    description: String,
+    jurisdiction: [],
+    goal: [],
+    action: [],
+    deleted: {
+      type: Date,
+      default: null
+    }
