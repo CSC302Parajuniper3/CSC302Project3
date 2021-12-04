@@ -28,7 +28,7 @@ beforeEach(async () => {
 test("Bad query", (done) => {
   const INVALID_RESOURCE_TYPE = 'invalid';
 
-  request.get('/listDefinitions').query({ resourceType: INVALID_RESOURCE_TYPE }).expect(404, function (err, res) {
+  request.get(`/${INVALID_RESOURCE_TYPE}`).expect(404, function (err, res) {
     expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
     done();
   });
@@ -40,7 +40,7 @@ test("Bad query", (done) => {
 test("Bad type query", (done) => {
   let bad_query = 1234;
 
-  request.get(`/${bad_query}`).query({ resourceType: bad_query }).expect(404, done);
+  request.get(`/${bad_query}`).expect(404, done);
 });
 
 /**
@@ -78,11 +78,11 @@ test("Many activities", (done) => {
         expectedPlan.push(PLAN_PREFIX + i);
       }
 
-      request.get(`/${act_resource}`).query({ resourceType: act_resource }).expect(200, function (err, res) {
+      request.get(`/${act_resource}`).expect(200, function (err, res) {
         expect(res.body.ids.sort()).toEqual(expectedActivity.sort());
       });
 
-      request.get(`/${plan_resource}`).query({ resourceType: plan_resource }).expect(200, function (err, res) {
+      request.get(`/${plan_resource}`).expect(200, function (err, res) {
         expect(res.body.ids.sort()).toEqual(expectedPlan.sort());
         done();
       });
@@ -110,11 +110,11 @@ test("One activity", (done) => {
     if (err) return console.error(err);
   });
 
-  request.get(`/${act_resource}`).query({ resourceType: act_resource }).expect(200, function (err, res) {
+  request.get(`/${act_resource}`).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual(RES_ACT_BODY.sort());
   });
 
-  request.get(`/${plan_resource}`).query({ resourceType: plan_resource }).expect(200, function (err, res) {
+  request.get(`/${plan_resource}`).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual(RES_PLAN_BODY.sort());
     done();
   });
@@ -125,11 +125,11 @@ test("One activity", (done) => {
  * Ensures that the response is empty/
  */
 test("No activities", (done) => {
-  request.get(`/${act_resource}`).query({ resourceType: act_resource }).expect(200, function (err, res) {
+  request.get(`/${act_resource}`).expect(200, function (err, res) {
     expect(res.body.ids).toEqual([]);
   });
 
-  request.get(`/${plan_resource}`).query({ resourceType: plan_resource }).expect(200, function (err, res) {
+  request.get(`/${plan_resource}`).expect(200, function (err, res) {
     expect(res.body.ids).toEqual([]);
     done();
   });
