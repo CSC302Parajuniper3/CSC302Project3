@@ -1,13 +1,16 @@
 # CSC302Project3
-Description: A library for existing digital medical guidelines in FHIR format that allows other apps to retrieve them
+Description: An online collection for existing digital medical guidelines in FHIR format, with an API that allows other apps to retrieve them. Full API documentation can be found at the end of this file.
 
----
 
-## Repo Layout
+## Where to find our documentation and meeting notes
+
+### Repo Layout
 
 ```
 api/
-    routes/
+    mock-data/
+      ActivityDefinition/
+      PlanDefinition/
     services/
     tests/
 meeting-notes/
@@ -21,37 +24,34 @@ models/
 
 ---
 
-# Where to find our documentation and meeting notes
-
-## Tech Stack and Decisions:
+### Tech Stack and Decisions:
 
 Tech stack and their decisions can be found in the `Tech Stack.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
-## Project development plan:
+### Project development plan:
 
 The project development plan can be found in the `Milestones.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
-## Assignment 2 Results:
+### Assignment 2 Results:
 
 The project development plan can be found in the `Asssignment2.md` file under the `documents` folder in the top level directory of the repo.
 
 ---
 
-## Meeting Notes
+### Meeting Notes
 
 Meeting notes can be found in the `meeting-notes` folder in the top level directory of the repo.
 
 ---
 
-# How do we <build/run/test> our project in one click?
 
 ## Docker
-
-### Pre-requisite
+Or, **"How do we <build/run/test> our project in one click?"**
+### **Pre-requisites**
 This project uses `Docker` and `docker-compose` to containerize and deploy the application. Please ensure you have `docker`, `docker-compose`, and `docker-engine` installed on your machine. If not, follow the steps in the following links: https://docs.docker.com/engine/install/ and https://docs.docker.com/compose/install/
 
 Also please ensure that the docker service is running. If it is not running, you can launch it on Linux machines with the command `sudo systemctl start docker`. If you are not running Linux, please search online for further instructions.
@@ -93,6 +93,8 @@ Here are is the list of all currently available targets:
 + `e_dev`  -- Development build for express.js server.
 + `e_prod` -- Production build for express.js server.
 
+---
+
 ## How to verify that our project works?
 
 Do not use the -d option in this case.
@@ -105,18 +107,9 @@ If you run 'e_test', you should see an execution of the unit tests. They should 
 
 If you run 'e_dev', you should be able to use the endpoints from Postman.
 
-### Endpoints:
+---
 
-- NAME: /listDefinitions, QUERY resourceType:\<ActivityDefinition OR PlanDefinition>
-  - Returns a list of defintion ids of the specified type or an empty [] if none exists.
-
-- NAME: /\<ActivityDefinition OR PlanDefinition>/\<definiton ID>
-  - Returns the json of the specified definition id.
-
-- NAME: /\<ActivityDefinition OR PlanDefinition>, BODY: id: The string representing the definition
-  - Adds a definition with the specified id into the database.
-
-### Troubleshooting
+## Troubleshooting
 
 - If you get the following error while deploying: `Error while fetching server API version` then your issue might be permission issues with docker's socket. Run the (Linux) command `sudo chmod 666 /var/run/docker.sock`, which may solve the issue.
 
@@ -151,3 +144,80 @@ Runs the project on the local machine.
 Runs the test suites of the project.
 
 ---
+# API Documentation
+
+## Endpoints:
+
+- **/::resourceType::**
+  - Parameters
+    - `resourceType`:
+      - Type of resource to retrieve
+      - Values: <**ActivityDefinition**||**PlanDefinition**>
+  - **GET**
+    - Returns a list of defintion ids of the specified type or an empty [] if none 
+    - Status Codes
+      - **200**: Request OK
+      - **404**: resource type invalid.
+      - **500**: internal error if model can't be found.
+    -
+          GET http://localhost:3001/ActivityDefinition
+          ---------------------
+          {
+            "ids": []
+          }
+  - **POST**
+    - Endpoint to create a new guideline in the DB. Returns copy of newly created guideline.
+    - Body
+      - Request MUST contain a body containing the record data in JSON format. The precise formatting for this data can be found in the [Schemas](###Schemas) section of this document.
+    - Status Codes
+      - **200**: Request OK
+      - **400**: params or body was incorrectly formatted / missing data.
+      - **500**: internal error if model can't be found or data can not be saved
+    -
+          POST http://localhost:3001/PlanDefinition
+          ---------------------
+          TODO:
+- **/::resourceType::/::id::**
+  - Parameters 
+    - `resourceType`
+      - Type of resource
+      - Values: <**ActivityDefinition**||**PlanDefinition**>
+    - `id` 
+      - Resource ID
+  - **GET**
+    - Endpoint to retrieve a guideline JSON from the DB
+    - Status Codes
+      - **200**: Request OK
+      - **400**: params incorrectly used (e.g. incorrect resource type)
+      - **404**: specified record id cannot be found
+      - **500**: internal error if model can't be found or data can not be fetched
+    -
+          GET http://localhost:3001/PlanDefinition/1
+          ---------------------
+          TODO:
+  - **PUT** 
+    - Endpoint to update an existing guideline record in the DB
+    - Body
+      - Request MUST contain a body containing the record data in JSON format. The precise formatting for this data can be found in the [Schemas](###Schemas) section of this document.
+    - Status Codes
+      - **200**: Request OK
+      - **400**: params or body incorrectly set (e.g. incorrect resource type, empty body JSON)
+      - **404**: specified record id cannot be found
+      - **500**: internal error if model can't be found or data can not be updated
+    -
+          PUT http://localhost:3001/PlanDefinition/1
+          ---------------------
+          TODO:
+  - **DELETE** 
+    - Endpoint to delete a guideline record in the db.
+    - Status Codes
+      - **200**: Request OK
+      - **404**: specified record id cannot be found
+      - **500**: internal error if model can't be found or data can not be updated
+    -
+          DELETE http://localhost:3001/PlanDefinition/1
+          ---------------------
+          TODO:
+
+## Schemas
+lorem ipsum

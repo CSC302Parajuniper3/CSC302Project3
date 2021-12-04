@@ -68,7 +68,10 @@ function getNextVersion(versionString) {
 }
 
 /**
- * /listDefinitions:
+ * GET /:resourceType
+ * 
+ * Endpoint to retrieve list of definitions IDs for a resource
+ * 
  * req: query.resourceType: A string of a resourceType (see above)
  * res: A list of definitionIds of the specified resourceType
  * Status:
