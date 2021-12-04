@@ -9,6 +9,9 @@ jest.setTimeout(10000);
 
 const RESOURCE_INVALID_MSG = 'Resource type invalid.';
 
+const act_resource = server.ACTIVITY_RESOURCE_TYPE;
+const plan_resource = server.PLAN_RESOURCE_TYPE;
+
 beforeEach(async () => {
   // Clears all data from db
   await ActivityDefinition.deleteMany({}).catch((err) => {
@@ -32,33 +35,19 @@ test("Bad query", (done) => {
 });
 
 /**
- * Tests /listDefinitions using a req with an empty query string
- */
-test("Empty query", (done) => {
-  request.get('/listDefinitions').query({ resourceType: '' }).expect(404, function (err, res) {
-    expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
-    done();
-  });
-});
-
-/**
  * Tests /listDefinitions using a req wwith a resource type of the wrong datatype.
  */
 test("Bad type query", (done) => {
-  request.get('/listDefinitions').query({ resourceType: 1234 }).expect(404, function (err, res) {
-    expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
-    done();
-  });
+  let bad_query = 1234;
+
+  request.get(`/${bad_query}`).query({ resourceType: bad_query }).expect(404, done);
 });
 
 /**
  * Tests using an invalid query with no query string
  */
 test("No query", (done) => {
-  request.get('/listDefinitions').expect(404, function (err, res) {
-    expect(res.body.error).toEqual(RESOURCE_INVALID_MSG);
-    done();
-  });
+  request.get(`/`).expect(404, done);
 });
 
 /**
@@ -89,11 +78,11 @@ test("Many activities", (done) => {
         expectedPlan.push(PLAN_PREFIX + i);
       }
 
-      request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
+      request.get(`/${act_resource}`).query({ resourceType: act_resource }).expect(200, function (err, res) {
         expect(res.body.ids.sort()).toEqual(expectedActivity.sort());
       });
 
-      request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }).expect(200, function (err, res) {
+      request.get(`/${plan_resource}`).query({ resourceType: plan_resource }).expect(200, function (err, res) {
         expect(res.body.ids.sort()).toEqual(expectedPlan.sort());
         done();
       });
@@ -121,11 +110,11 @@ test("One activity", (done) => {
     if (err) return console.error(err);
   });
 
-  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
+  request.get(`/${act_resource}`).query({ resourceType: act_resource }).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual(RES_ACT_BODY.sort());
   });
 
-  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }).expect(200, function (err, res) {
+  request.get(`/${plan_resource}`).query({ resourceType: plan_resource }).expect(200, function (err, res) {
     expect(res.body.ids.sort()).toEqual(RES_PLAN_BODY.sort());
     done();
   });
@@ -136,11 +125,11 @@ test("One activity", (done) => {
  * Ensures that the response is empty/
  */
 test("No activities", (done) => {
-  request.get('/listDefinitions').query({ resourceType: server.ACTIVITY_RESOURCE_TYPE }).expect(200, function (err, res) {
+  request.get(`/${act_resource}`).query({ resourceType: act_resource }).expect(200, function (err, res) {
     expect(res.body.ids).toEqual([]);
   });
 
-  request.get('/listDefinitions').query({ resourceType: server.PLAN_RESOURCE_TYPE }).expect(200, function (err, res) {
+  request.get(`/${plan_resource}`).query({ resourceType: plan_resource }).expect(200, function (err, res) {
     expect(res.body.ids).toEqual([]);
     done();
   });

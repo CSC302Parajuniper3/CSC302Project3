@@ -69,7 +69,7 @@ function verify_add(params) {
  * @param params The parameter (see above)
  */
 function verify_list(params) {
-    request.get('/listDefinitions')
+    request.get(`/${params.resource_types[0]}`)
         .query({ resourceType: params.resource_types[1] })
         .expect(params.statuses[1])
         .then((res) => {

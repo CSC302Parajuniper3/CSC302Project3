@@ -75,8 +75,8 @@ function getNextVersion(versionString) {
  * - 404: resource type invalid.
  * - 500: internal error if model can't be found.
  */
-app.get('/listDefinitions', async (req, res) => {
-  let resourceType = req.query.resourceType;
+app.get('/:resourceType', async (req, res) => {
+  const { resourceType } = req.params;
   let model = null;
 
   if (resourceType === ACTIVITY_RESOURCE_TYPE) {
