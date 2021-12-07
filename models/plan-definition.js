@@ -4,7 +4,6 @@ const PlanDefinitionSchema = new mongoose.Schema({
     id: {
         type: String,
         minLength: 1,
-        unique: true,
         required: true
     },
     resourceType: {
@@ -43,6 +42,8 @@ const PlanDefinitionSchema = new mongoose.Schema({
 PlanDefinitionSchema.pre('findOne', function() {
     this.where('deleted', null);
 });
+
+PlanDefinitionSchema.index({id: 1, deleted: 1}, {unique: true});
 
 const PlanDefinition = mongoose.model('PlanDefinition', PlanDefinitionSchema);
 

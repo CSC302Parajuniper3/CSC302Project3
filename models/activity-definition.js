@@ -4,7 +4,6 @@ const ActivityDefinitionSchema = new mongoose.Schema({
     id: {
         type: String,
         minLength: 1,
-        unique: true,
         required: true
     },
     resourceType: {
@@ -46,6 +45,8 @@ const ActivityDefinitionSchema = new mongoose.Schema({
 ActivityDefinitionSchema.pre('findOne', function() {
     this.where('deleted', null);
 });
+
+ActivityDefinitionSchema.index({id: 1, deleted: 1}, {unique: true});
 
 const ActivityDefinition = mongoose.model('ActivityDefinition', ActivityDefinitionSchema);
 
