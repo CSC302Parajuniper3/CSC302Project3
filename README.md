@@ -54,6 +54,13 @@ These points are discussed in Assignment3.md under “Features” and “How hav
 
 ---
 
+### Presentation
+
+It can be found under documents/ in a powerpoint called CSC302 Presentation
+It can also be accessed via the following link: https://docs.google.com/presentation/d/1ltT74B2o51-jQCfjfXVw7LbdVPPH5J-IyHUmIUouEEE/edit?usp=sharing
+
+---
+
 
 ## Docker
 Or, **"How do we <build/run/test> our project in one click?"**
