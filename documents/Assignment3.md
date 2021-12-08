@@ -65,6 +65,7 @@ We should additionally verify the above functionality using manual testing with 
 - In particular, we agreed that we will write unit tests for each endpoint and integration tests that include functionality from each endpoint.
 - The client commented that our “several edge cases” criteria wasn’t specific enough and wanted us to change it to a concrete number. It was changed to “2 - 3 edge cases.”
 - After this change, the client approved our unit/integration testing acceptance criteria and determined that “success” would be determined by completing all acceptance criterias.
+ - In addition, we included validation.js in services, which validates some key properties of the inputs such as the id and resourceTypes which are essential to the integrity of our data.
  
 ### To show the acceptance criterias have been met:
   
